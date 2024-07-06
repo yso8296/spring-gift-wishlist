@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.model.product.Product;
+import gift.model.product.ProductListResponse;
 import gift.repository.ProductDao;
 import gift.model.product.ProductRequest;
 import gift.model.product.ProductResponse;
@@ -36,8 +37,8 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<ProductResponse> responses = productService.findAllProduct();
+    public ResponseEntity<ProductListResponse> getAllProducts() {
+        ProductListResponse responses = productService.findAllProduct();
         return ResponseEntity.ok().body(responses);
     }
 

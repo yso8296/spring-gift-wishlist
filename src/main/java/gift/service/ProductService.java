@@ -1,6 +1,8 @@
 package gift.service;
 
+import gift.common.exception.ProductNotFoundException;
 import gift.model.product.Product;
+import gift.model.product.ProductListResponse;
 import gift.model.product.ProductRequest;
 import gift.model.product.ProductResponse;
 import gift.repository.ProductDao;
@@ -27,10 +29,11 @@ public class ProductService {
         return ProductResponse.from(product);
     }
 
-    public List<ProductResponse> findAllProduct() {
+    public ProductListResponse findAllProduct() {
         List<Product> productList = productDao.findAll();
-        List<ProductResponse> responses = productList.stream().map(ProductResponse::from)
+        List<ProductResponse> responseList = productList.stream().map(ProductResponse::from)
             .collect(Collectors.toList());
+        ProductListResponse responses = new ProductListResponse(responseList);
         return responses;
     }
 

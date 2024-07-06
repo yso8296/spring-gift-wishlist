@@ -1,5 +1,6 @@
 package gift.repository;
 
+import gift.common.exception.ProductNotFoundException;
 import gift.enums.ReadQuery;
 import gift.enums.WriteQuery;
 import gift.model.product.Product;
@@ -7,6 +8,8 @@ import gift.model.product.ProductRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -39,16 +42,20 @@ public class ProductDao {
 
     public Product findById(Long id) {
         var sql = ReadQuery.FIND_BY_ID.getQuery();
-        return jdbcTemplate.queryForObject(
-            sql,
-            (resultSet, rowNum) -> new Product(
-                resultSet.getLong("id"),
-                resultSet.getString("name"),
-                resultSet.getInt("price"),
-                resultSet.getString("imageUrl")
-            ),
-            id
-        );
+        try {
+            return jdbcTemplate.queryForObject(
+                sql,
+                (resultSet, rowNum) -> new Product(
+                    resultSet.getLong("id"),
+                    resultSet.getString("name"),
+                    resultSet.getInt("price"),
+                    resultSet.getString("imageUrl")
+                ),
+                id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw new ProductNotFoundException();
+        }
     }
 
     public List<Product> findAll() {
