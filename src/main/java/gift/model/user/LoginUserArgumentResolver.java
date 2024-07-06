@@ -31,7 +31,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String token = request.getHeader("Authorization").substring(7);
-        String email = jwtTokenProvider.extractSubject(token);
+        String email = jwtTokenProvider.extractEmail(token);
         return userService.findUserByEmail(email);
     }
 }

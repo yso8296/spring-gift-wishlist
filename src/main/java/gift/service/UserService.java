@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.common.exception.ExistUserException;
 import gift.jwt.JwtTokenProvider;
 import gift.model.product.Product;
 import gift.model.product.ProductResponse;
@@ -23,6 +24,9 @@ public class UserService {
     }
 
     public UserResponse register(UserRequest userRequest) {
+        if (userDao.existsByEmail(userRequest.email())) {
+            throw new ExistUserException();
+        }
         User user = userDao.save(userRequest);
         return UserResponse.from(user);
     }

@@ -1,6 +1,7 @@
 package gift.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.common.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,30 +20,14 @@ public class TokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7); // "Bearer " 제거
-            if (jwtTokenProvider.validateToken(token)) {
-                return true;
-            } else {
-                invalidToken(response, "유효하지 않은 토큰입니다.");
-                return false;
-            }
+            jwtTokenProvider.validateToken(token);
+            return true;
         }
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        invalidToken(response, "토큰이 존재하지 않습니다.");
-        return false;
-    }
-
-    private static void invalidToken(HttpServletResponse response, String message) throws IOException {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        problemDetail.setDetail(message);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(problemDetail));
+        throw new InvalidTokenException("토큰이 없거나 Bearer 토큰이 아닙니다.");
     }
 }

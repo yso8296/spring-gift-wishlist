@@ -11,7 +11,7 @@ create table product (
 create table users (
                         id bigint auto_increment primary key,
                         password varchar(255) not null ,
-                        email varchar(255) not null
+                        email varchar(255) unique not null
 );
 
 CREATE table user_product (

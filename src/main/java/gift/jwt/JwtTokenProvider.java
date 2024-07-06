@@ -1,9 +1,13 @@
 package gift.jwt;
 
+import gift.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 
@@ -28,19 +32,23 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return !claims.getBody().getExpiration().before(new Date());
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException("만료된 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            throw new InvalidTokenException("지원되지 않는 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            throw new InvalidTokenException("토큰이 존재하지 않습니다.");
         } catch (Exception e) {
-            return false;
+            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
         }
     }
 
-    public String extractSubject(String token) {
-        try {
-            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody()
-                .getSubject();
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+    public String extractEmail(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody()
+            .getSubject();
     }
 }
