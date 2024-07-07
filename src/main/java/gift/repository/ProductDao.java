@@ -80,7 +80,9 @@ public class ProductDao {
     }
 
     public void delete(Long id) {
-        var sql = WriteQuery.DELETE.getQuery();
+        var sql = "DELETE FROM user_product WHERE product_id = ?";
+        jdbcTemplate.update(sql, id);
+        sql = WriteQuery.DELETE.getQuery();
         jdbcTemplate.update(sql, id);
     }
 }

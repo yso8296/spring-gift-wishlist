@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.common.annotation.LoginUser;
+import gift.model.product.ProductListResponse;
 import gift.model.product.ProductResponse;
 import gift.model.user.User;
 import gift.service.UserService;
@@ -24,8 +25,8 @@ public class WishListController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductResponse>> getAllWishList(@LoginUser User user) {
-        List<ProductResponse> responses = userService.findWishList(user.getId());
+    public ResponseEntity<ProductListResponse> getAllWishList(@LoginUser User user) {
+        ProductListResponse responses = userService.findWishList(user.getId());
         return ResponseEntity.ok().body(responses);
     }
 

@@ -1,8 +1,9 @@
 package gift.service;
 
 import gift.common.exception.ExistUserException;
-import gift.jwt.JwtTokenProvider;
+import gift.common.auth.JwtTokenProvider;
 import gift.model.product.Product;
+import gift.model.product.ProductListResponse;
 import gift.model.product.ProductResponse;
 import gift.model.user.User;
 import gift.repository.UserDao;
@@ -40,10 +41,11 @@ public class UserService {
         return userDao.findByEmail(email);
     }
 
-    public List<ProductResponse> findWishList(Long userId) {
+    public ProductListResponse findWishList(Long userId) {
         List<Product> wishList = userDao.findWishList(userId);
-        List<ProductResponse> responses = wishList.stream().map(ProductResponse::from)
+        List<ProductResponse> wishResponses = wishList.stream().map(ProductResponse::from)
             .collect(Collectors.toList());
+        ProductListResponse responses = new ProductListResponse(wishResponses);
         return responses;
     }
 

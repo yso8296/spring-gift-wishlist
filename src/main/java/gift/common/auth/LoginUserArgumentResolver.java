@@ -1,7 +1,6 @@
-package gift.model.user;
+package gift.common.auth;
 
 import gift.common.annotation.LoginUser;
-import gift.jwt.JwtTokenProvider;
 import gift.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;

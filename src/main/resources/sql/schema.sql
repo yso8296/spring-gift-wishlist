@@ -1,5 +1,6 @@
 drop table if exists product;
 drop table if exists users;
+drop table if exists user_product;
 
 create table product (
                           id bigint auto_increment primary key,
@@ -14,7 +15,7 @@ create table users (
                         email varchar(255) unique not null
 );
 
-CREATE table user_product (
+create table user_product (
                              user_id bigint,
                              product_id bigint,
                              FOREIGN KEY (user_id) REFERENCES users(id),

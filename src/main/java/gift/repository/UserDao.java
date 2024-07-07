@@ -1,5 +1,6 @@
 package gift.repository;
 
+import gift.common.exception.ProductNotFoundException;
 import gift.common.exception.UserNotFoundException;
 import gift.enums.ReadQuery;
 import gift.model.product.Product;
@@ -57,16 +58,20 @@ public class UserDao {
 
     public List<Product> findWishList(Long id) {
         var sql = "select * from product join user_product on product.id = user_product.product_id where user_product.user_id = ?";
-        return jdbcTemplate.query(
-            sql,
-            (resultSet, rowNum) -> new Product(
-                resultSet.getLong("id"),
-                resultSet.getString("name"),
-                resultSet.getInt("price"),
-                resultSet.getString("imageUrl")
-            ),
-            id
-        );
+        try {
+            return jdbcTemplate.query(
+                sql,
+                (resultSet, rowNum) -> new Product(
+                    resultSet.getLong("id"),
+                    resultSet.getString("name"),
+                    resultSet.getInt("price"),
+                    resultSet.getString("imageUrl")
+                ),
+                id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw new ProductNotFoundException();
+        }
     }
 
     public void registerWishList(Long userId, Long productId, int count) {

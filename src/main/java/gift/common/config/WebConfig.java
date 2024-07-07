@@ -1,7 +1,7 @@
 package gift.common.config;
 
-import gift.jwt.TokenInterceptor;
-import gift.model.user.LoginUserArgumentResolver;
+import gift.common.auth.TokenInterceptor;
+import gift.common.auth.LoginUserArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
