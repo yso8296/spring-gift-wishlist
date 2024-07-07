@@ -8,7 +8,6 @@ import gift.model.product.ProductRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -41,7 +40,7 @@ public class ProductDao {
     }
 
     public Product findById(Long id) {
-        var sql = ReadQuery.FIND_BY_ID.getQuery();
+        var sql = ReadQuery.FIND_PRODUCT_BY_ID.getQuery();
         try {
             return jdbcTemplate.queryForObject(
                 sql,
@@ -59,7 +58,7 @@ public class ProductDao {
     }
 
     public List<Product> findAll() {
-        var sql = ReadQuery.FIND_ALL.getQuery();
+        var sql = ReadQuery.FIND_ALL_PRODUCT.getQuery();
         return jdbcTemplate.query(
             sql,
             (resultSet, rowNum) -> new Product(
@@ -72,7 +71,7 @@ public class ProductDao {
     }
 
     public Product update(Long id, ProductRequest productRequest) {
-        var sql = WriteQuery.UPDATE.getQuery();
+        var sql = WriteQuery.UPDATE_PRODUCT.getQuery();
         jdbcTemplate.update(sql, productRequest.name(), productRequest.price(), productRequest.imageUrl(), id);
 
         Product product = findById(id);
@@ -80,9 +79,9 @@ public class ProductDao {
     }
 
     public void delete(Long id) {
-        var sql = "DELETE FROM user_product WHERE product_id = ?";
+        var sql = WriteQuery.DELETE_CONSTRAINT.getQuery();
         jdbcTemplate.update(sql, id);
-        sql = WriteQuery.DELETE.getQuery();
+        sql = WriteQuery.DELETE_PRODUCT.getQuery();
         jdbcTemplate.update(sql, id);
     }
 }

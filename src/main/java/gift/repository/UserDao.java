@@ -3,17 +3,13 @@ package gift.repository;
 import gift.common.exception.ProductNotFoundException;
 import gift.common.exception.UserNotFoundException;
 import gift.enums.ReadQuery;
+import gift.enums.WriteQuery;
 import gift.model.product.Product;
-import gift.model.product.ProductRequest;
 import gift.model.user.User;
 import gift.model.user.UserRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -34,7 +30,7 @@ public class UserDao {
     }
 
     public User findByEmail(String email) {
-        var sql = ReadQuery.FIND_BY_EMAIL.getQuery();
+        var sql = ReadQuery.FIND_USER_BY_EMAIL.getQuery();
         try {
             return jdbcTemplate.queryForObject(
                 sql,
@@ -51,13 +47,13 @@ public class UserDao {
     }
 
     public boolean existsByEmail(String email) {
-        var sql = "select count(*) from users where email = ?";
+        var sql = ReadQuery.COUNT_USER_BY_EMAIL.getQuery();
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{email}, Integer.class);
         return count > 0;
     }
 
     public List<Product> findWishList(Long id) {
-        var sql = "select * from product join user_product on product.id = user_product.product_id where user_product.user_id = ?";
+        var sql = ReadQuery.FIND_ALL_WISH.getQuery();
         try {
             return jdbcTemplate.query(
                 sql,
@@ -75,7 +71,7 @@ public class UserDao {
     }
 
     public void registerWishList(Long userId, Long productId, int count) {
-        var sql = "INSERT INTO user_product (user_id, product_id) VALUES (?, ?)";
+        var sql = WriteQuery.REGISTER_WISH.getQuery();
 
         for (int i = 0; i < count; i++) {
             jdbcTemplate.update(sql, userId, productId);
@@ -83,7 +79,7 @@ public class UserDao {
     }
 
     public void delete(Long userId, Long productId, int count) {
-        var sql = String.format("DELETE FROM user_product WHERE user_id = ? AND product_id = ? LIMIT %d", count);
-        jdbcTemplate.update(sql, userId, productId);
+        var sql = WriteQuery.DELETE_WISH.getQuery();
+        jdbcTemplate.update(sql, userId, productId, count);
     }
 }
